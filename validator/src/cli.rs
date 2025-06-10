@@ -1193,6 +1193,16 @@ pub fn app<'a>(version: &'a str, default_args: &'a DefaultArgs) -> App<'a, 'a> {
                 .help("Peer(s) to broadcast transactions to instead of the current leader")
         )
         .arg(
+            Arg::with_name("retransmit_peer")
+                .long("retransmit-peer")
+                .takes_value(true)
+                .number_of_values(1)
+                .multiple(true)
+                .value_name("HOST:PORT")
+                .validator(solana_net_utils::is_host_port)
+                .help("Peer(s) to always retransmit shreds to")
+        )
+        .arg(
             Arg::with_name("rpc_send_transaction_also_leader")
                 .long("rpc-send-transaction-also-leader")
                 .requires("rpc_send_transaction_tpu_peer")

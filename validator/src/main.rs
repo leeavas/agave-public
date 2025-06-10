@@ -783,6 +783,19 @@ pub fn main() {
 
     let full_api = matches.is_present("full_rpc_api");
 
+    let retransmit_peers = matches
+        .values_of("retransmit_peer")
+        .map(|values| {
+            values
+                .map(solana_net_utils::parse_host_port)
+                .collect::<Result<Vec<SocketAddr>, String>>()
+        })
+        .transpose()
+        .unwrap_or_else(|e| {
+            eprintln!("failed to parse retransmit peer address: {e}");
+            exit(1);
+        });
+
     let mut validator_config = ValidatorConfig {
         require_tower: matches.is_present("require_tower"),
         tower_storage,
@@ -931,6 +944,7 @@ pub fn main() {
             .is_present("delay_leader_block_for_pending_fork"),
         wen_restart_proto_path: value_t!(matches, "wen_restart", PathBuf).ok(),
         wen_restart_coordinator: value_t!(matches, "wen_restart_coordinator", Pubkey).ok(),
+        retransmit_peers,
         ..ValidatorConfig::default()
     };
 
